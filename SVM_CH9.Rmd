@@ -1,0 +1,24 @@
+## The svm() function can be used to fit a support vector classifier when the argument kernel = "linear".
+# A cost argument allows us to specify the cost of a violation to the margin. When the cost argument is small, then the margin will be wide and many support vector will be on the margin or will violate the margin. 
+# We now use the svm() function to fit the support vector classifier for a given value of the cost parameter. 
+set.seed(1)
+x = matrix(rnorm(20*2), ncol = 2)
+y = c(rep(-1,10), rep(1,10))
+x[y==1,] = x[y==1,] + 1
+# Check weather the classes are linearly separable
+plot(x, col = (3-y))
+#They are not. Next we fit the support vector classifier. 
+dat = data.frame(x=x, y = as.factor(y))
+library(e1071)
+svmfit = svm(y~., data = dat, kernel = "linear", cost = 10, scale = FALSE)
+## The argument scale = FALSE tells the svm() function not to scale each feature to have mean zero or standard deviation one. 
+#Plot the support vector classifier
+plot(svmfit, dat)
+## The support vector are plotted as cross and the remaining observation are plotted as circle.
+svmfit$index
+## Basic information obout support vector classifier fit using the summary function.
+summary(svmfit)
+## What if we use smaller cost function
+svmfit = svm(y~., data = dat, kernel = "linear", cost = 0.1, scale = FALSE)
+## tune() performs cross validation. By default tune() performs ten fold cross-validation on a set of models of interest. 
+set.seed(1)

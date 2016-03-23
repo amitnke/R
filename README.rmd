@@ -1,0 +1,15 @@
+## When datasets are described in terms of key/value pairs, it is common to want to aggregate statistics across all elements with the same key. 
+# Spark has set of operation that combines the values that have the same key. 
+# These operation return RDDs and thus are transformations rather than actions. 
+** reduceByKey() is quite similar to reduce(); both takes a function and use it to combine values. reduceByKey() runs several parallel reduce operations, one for each key in the dataset, where each operation combines values that have the same key. It is not implemented as an action that returns values to the user program. Instead, it returns a new RDD consisting of each key and the reduced value for that key. 
+** foldByKey() is quite similar to fold(); both uses a zero value of the same type if the data in our RDD and combination function. As with fold(), the provided zero value for foldByKey() should have no impact when added with your combination function to another element. 
+val input = sc.parallelize(Array(("panda", 0), ("pink", 3), ("pirate",3), ("panda",1), ("pink",4)))
+input.mapValues(x => (x,1)).reduceByKey((x,y) => (x._1 + y._1, x._2 + y._2)).collect()
+#res3: Array[(String, (Int, Int))] = Array((pirate,(3,1)), (panda,(1,2)), (pink,(7,2)))
+
+##Words Count in Scala
+val input = sc.textFile("/Users/amit/R/README.rmd")
+val words = input.flatMap(x => x.split(" "))
+val result = words.map(x => (x,1)).reduceByKey((x,y) => x+y)
+##input.flatMap(x => x.split(" ")).countByValue() ## no need to collect. It will throw op to program.
+
